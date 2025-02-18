@@ -1,0 +1,16 @@
+FROM public.ecr.aws/lambda/python:3.12
+
+# install dependencies
+COPY requirements.txt ${LAMBDA_TASK_ROOT}
+RUN dnf update -y && \
+    dnf install -y g++ && \
+    pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# install code
+COPY dnstwist.py ${LAMBDA_TASK_ROOT}
+COPY dictionaries ${LAMBDA_TASK_ROOT}/dictionaries/
+COPY lambda_function.py ${LAMBDA_TASK_ROOT}
+
+# set the entrypoint to the handler fuction
+CMD [ "lambda_function.handler" ]
